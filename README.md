@@ -1,14 +1,15 @@
 django-futupayments
 ===================
 
-Приём платежей с пластиковых карт через Futubank.com
+Приём платежей с пластиковых карт через Futubank.com.
+Альфа-версия.
 
 Установка
 =========
 Ставим пакет:
 
 ```
-pip install -e git+https://github.com/shantilabs/django-futupayments.git#egg=futupayments
+pip install -e git+https://github.com/Futubank/django-futupayments.git#egg=futupayments
 ```
 
 Базовая настройка
