@@ -11,8 +11,8 @@ django-futupayments
 pip install -e git+https://github.com/shantilabs/django-futupayments.git#egg=futupayments
 ```
 
-Настройка
-=========
+Базовая настройка
+=================
 
 settings.py:
 
@@ -59,4 +59,35 @@ def my_view(request):
     {{ payment_form }}
     <input type="submit" value="Перевести {{ payment_form.cleaned_data.amount }} {{ payment_form.cleaned_data.currency }} за заказ №{{ payment_form.cleaned_data.order_id }}">
 </form>
+```
+
+Настройка уведомлений о платежах
+================================
+Чтобы работали уведомления о платежах, во-первых, добавляем в urls.py обработчик callback'ов:
+
+```python
+urlpatterns = patterns(
+    # ...
+    url('^futupayments/', include('futupayments.urls')),
+)
+```
+
+Получившийся URL — **http://вашсайт/futupayments/** надо прописать в личном кабинете Futubank'а.
+
+Теперь после каждой транзакции будет создаваться новый экземляр futupayments.models.Payment. Чтобы отслеживать
+поступления платежей, можно воспользоваться сигналами:
+
+```python
+from futupayments.models import Payment
+
+@receiver(post_save, sender=[Payment])
+def on_new_payment(sender, instance, **kwargs):
+    if instance.is_success():
+        logging.info(
+            u'поступила оплата заказа #%s в размере %s (транзакция #%s)',
+            instance.order_id,
+            instance.amount,
+            instance.transaction_id,
+        )
+
 ```
