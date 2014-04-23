@@ -12,9 +12,10 @@ class PaymentAdmin(admin.ModelAdmin):
         'transaction_id',
         'creation_datetime',
         'amount',
+        'currency',
         'order_id',
         'state',
-        'response_message',
+        'response',
         'meta',
     )
 
@@ -22,9 +23,10 @@ class PaymentAdmin(admin.ModelAdmin):
         'creation_datetime',
         'transaction_id',
         'amount',
+        'currency',
         'order_id',
         'state',
-        'response_message',
+        'response',
         'meta',
     )
 
