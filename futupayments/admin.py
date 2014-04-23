@@ -15,7 +15,7 @@ class PaymentAdmin(admin.ModelAdmin):
         'currency',
         'order_id',
         'state',
-        'response',
+        'message',
         'meta',
     )
 
@@ -26,7 +26,7 @@ class PaymentAdmin(admin.ModelAdmin):
         'currency',
         'order_id',
         'state',
-        'response',
+        'message',
         'meta',
     )
 
