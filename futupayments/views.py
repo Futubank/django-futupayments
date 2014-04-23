@@ -27,7 +27,7 @@ def callback(request):
     if not form.is_valid():
         resp = 'FAIL'
         from futupayments import config
-        if config.FUTUPAYMENTS_DEBUG:
+        if config.FUTUPAYMENTS_TEST_MODE:
             resp += u': {0}'.format(form.as_p())
         return HttpResponse(resp)
 
