@@ -5,8 +5,13 @@ from django.core.urlresolvers import reverse
 from futupayments import views
 
 
-default_url = 'https://secure.futubank.com/testing-pay/'
-# default_url = 'https://secure.futubank.com/pay/'
+FUTUPAYMENTS_DEBUG = getattr(settings, 'FUTUPAYMENTS_DEBUG', True)
+
+if FUTUPAYMENTS_DEBUG:
+    default_url = 'https://secure.futubank.com/testing-pay/'
+else:
+    default_url = 'https://secure.futubank.com/pay/'
+
 FUTUPAYMENTS_URL = getattr(settings, 'FUTUPAYMENTS_URL', default_url)
 
 FUTUPAYMENTS_MERCHANT_ID = getattr(settings, 'FUTUPAYMENTS_MERCHANT_ID', None)
