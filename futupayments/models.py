@@ -46,7 +46,7 @@ class Payment(models.Model):
     )
 
     def is_success(self):
-        return self.state is self.STATE_COMPLETE
+        return self.state == self.STATE_COMPLETE
 
     def __unicode__(self):
         return u'#{0} {1}'.format(self.transaction_id, self.state)
