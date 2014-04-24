@@ -81,7 +81,7 @@ urlpatterns = patterns(
 ```python
 from futupayments.models import Payment
 
-@receiver(post_save, sender=[Payment])
+@receiver(post_save, sender=Payment)
 def on_new_payment(sender, instance, **kwargs):
     if instance.is_success():
         logging.info(
