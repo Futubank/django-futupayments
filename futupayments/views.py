@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -32,4 +31,4 @@ def callback(request):
         return HttpResponse(resp)
 
     payment = form.save()
-    return HttpResponse(u'OK: #{0}'.format(payment.transaction_id))
+    return HttpResponse(u'OK{0}'.format(payment.order_id))
