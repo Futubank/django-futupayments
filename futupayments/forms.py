@@ -48,7 +48,7 @@ class PaymentForm(forms.Form):
                 random.choice(string.ascii_letters)
                 for _ in range(32)
             ),
-            'timestamp': int(time.time()),
+            'unix_timestamp': int(time.time()),
             'merchant': config.FUTUPAYMENTS_MERCHANT_ID,
             'fail_url': request.build_absolute_uri(
                 config.FUTUPAYMENTS_FAIL_URL,
@@ -73,7 +73,7 @@ class PaymentForm(forms.Form):
     success_url = forms.URLField(widget=forms.HiddenInput)
     fail_url = forms.URLField(widget=forms.HiddenInput)
     cancel_url = forms.URLField(widget=forms.HiddenInput)
-    timestamp = forms.IntegerField(widget=forms.HiddenInput)
+    unix_timestamp = forms.IntegerField(widget=forms.HiddenInput)
     salt = forms.CharField(widget=forms.HiddenInput)
     signature = forms.CharField(widget=forms.HiddenInput)
 
@@ -108,14 +108,14 @@ def force_str(v):
     return v.encode('utf-8') if isinstance(v, unicode) else str(v)
 
 
-def double_sha1(secret_key, data):
+def double_sha1(secret_key, s):
     """
     >>> double_sha1('C0FFEE', 'example')
     '27d204596505ff298ca79fb3bb949501cd7b2fa7'
     """
     for i in range(2):
-        data = sha1(secret_key + data).hexdigest()
-    return data
+        s = sha1(secret_key + s).hexdigest()
+    return s
 
 
 if __name__ == "__main__":
