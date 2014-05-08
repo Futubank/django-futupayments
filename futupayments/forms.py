@@ -11,7 +11,7 @@ from futupayments.models import Payment
 
 
 class PaymentCallbackForm(forms.ModelForm):
-    timestamp = forms.CharField()
+    unix_timestamp = forms.CharField()
     salt = forms.CharField()
     signature = forms.CharField()
 
