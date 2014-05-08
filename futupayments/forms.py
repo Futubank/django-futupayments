@@ -35,7 +35,8 @@ class PaymentForm(forms.Form):
 
     @classmethod
     def create(cls, request, amount, order_id, description,
-               meta=None, cancel_url=None):
+               client_email='', client_phone='', meta=None,
+               cancel_url=None):
         from futupayments import config
         data = {
             'amount': amount,
@@ -44,6 +45,8 @@ class PaymentForm(forms.Form):
             'cancel_url': cancel_url or request.build_absolute_uri(),
             'meta': meta or '',
             'currency': 'RUB',
+            'client_email': client_email,
+            'client_phone': client_phone,
             'salt': ''.join(
                 random.choice(string.ascii_letters)
                 for _ in range(32)
@@ -75,6 +78,9 @@ class PaymentForm(forms.Form):
     cancel_url = forms.URLField(widget=forms.HiddenInput)
     unix_timestamp = forms.IntegerField(widget=forms.HiddenInput)
     salt = forms.CharField(widget=forms.HiddenInput)
+    client_email = forms.EmailField(widget=forms.HiddenInput, required=False)
+    client_phone = forms.CharField(widget=forms.HiddenInput, required=False,
+                                   min_length=10, max_length=30)
     signature = forms.CharField(widget=forms.HiddenInput)
 
 

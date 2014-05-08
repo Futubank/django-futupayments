@@ -45,6 +45,9 @@ def my_view(request):
        order_id=order_id,
        # описание в свободной форме
        description=u'Заказ №{0}'.format(order_id),
+       # данные клиента (если они есть)
+       client_email='test@test.ru',
+       client_phone='+7 912 9876543',
    )
    return render(request, 'my_template.html', {
        'payment_form_url': FUTUPAYMENTS_URL,
@@ -72,7 +75,8 @@ urlpatterns = patterns(
 )
 ```
 
-Получившийся URL — **http://вашсайт/futupayments/** надо прописать в личном кабинете Futubank'а.
+Получившийся URL — **http://вашсайт/futupayments/** надо прописать в личном кабинете Futubank'
+(https://secure.futubank.com) на вкладке «Уведомления о транзакциях» в пункте «Уведомления с помощью POST-запросов».
 
 Теперь после каждой транзакции будет создаваться новый экземляр futupayments.models.Payment. Чтобы отслеживать
 поступления платежей, можно воспользоваться сигналами:
