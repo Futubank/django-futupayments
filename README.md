@@ -48,6 +48,7 @@ def my_view(request):
        # данные клиента (если они есть)
        client_email='test@test.ru',
        client_phone='+7 912 9876543',
+       client_name=u'Иоганн Кристоф Бах',
    )
    return render(request, 'my_template.html', {
        'payment_form_url': FUTUPAYMENTS_URL,

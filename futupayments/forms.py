@@ -37,8 +37,8 @@ class PaymentForm(forms.Form):
 
     @classmethod
     def create(cls, request, amount, order_id, description,
-               client_email='', client_phone='', meta=None,
-               cancel_url=None):
+               client_email='', client_phone='', client_name='',
+               meta=None, cancel_url=None):
         from futupayments import config
         data = {
             'amount': amount,
@@ -49,6 +49,7 @@ class PaymentForm(forms.Form):
             'currency': 'RUB',
             'client_email': client_email,
             'client_phone': client_phone,
+            'client_name': client_name,
             'salt': ''.join(
                 random.choice(string.ascii_letters)
                 for _ in range(32)
@@ -83,6 +84,7 @@ class PaymentForm(forms.Form):
     client_email = forms.EmailField(widget=forms.HiddenInput, required=False)
     client_phone = forms.CharField(widget=forms.HiddenInput, required=False,
                                    min_length=10, max_length=30)
+    client_name = forms.CharField(widget=forms.HiddenInput, required=False)
     signature = forms.CharField(widget=forms.HiddenInput)
 
 
