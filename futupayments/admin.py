@@ -9,6 +9,7 @@ class PaymentAdmin(admin.ModelAdmin):
         'creation_datetime',
     )
     list_display = (
+        'testing',
         'transaction_id',
         'creation_datetime',
         'amount',
@@ -18,8 +19,8 @@ class PaymentAdmin(admin.ModelAdmin):
         'message',
         'meta',
     )
-
     readonly_fields = (
+        'testing',
         'creation_datetime',
         'transaction_id',
         'amount',
@@ -28,6 +29,9 @@ class PaymentAdmin(admin.ModelAdmin):
         'state',
         'message',
         'meta',
+    )
+    list_filter = (
+        'testing',
     )
 
     def has_delete_permission(self, request, obj=None):
