@@ -16,15 +16,13 @@ class PaymentCallbackForm(forms.ModelForm):
     signature = forms.CharField()
     testing = forms.CharField(required=False)
 
-    def clean_testing(self):
-        return self.cleaned_data.get('testing') == '1'
-
     def clean(self):
         from futupayments import config
         key = config.FUTUPAYMENTS_SECRET_KEY
         data = self.cleaned_data
         if self.cleaned_data['signature'] != get_signature(key, data):
             raise ValidationError('Incorrect signature')
+        self.cleaned_data['testing'] = self.cleaned_data.get('testing') == '1'
         return self.cleaned_data
 
     class Meta:
