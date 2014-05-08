@@ -19,6 +19,10 @@ class Payment(models.Model):
         u'ID транзакции в платежном шлюзе',
         db_index=True,
     )
+    testing = models.BooleanField(
+        u'тестовая транзакция',
+        default=True,
+    )
     amount = models.DecimalField(
         u'сумма операции',
         max_digits=10,

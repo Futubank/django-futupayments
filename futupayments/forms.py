@@ -14,6 +14,10 @@ class PaymentCallbackForm(forms.ModelForm):
     unix_timestamp = forms.CharField()
     salt = forms.CharField()
     signature = forms.CharField()
+    testing = forms.CharField(required=False)
+
+    def clean_testing(self):
+        return self.cleaned_data.get('testing') == '1'
 
     def clean(self):
         from futupayments import config
