@@ -87,7 +87,8 @@ from futupayments.models import Payment
 
 @receiver(post_save, sender=Payment)
 def on_new_payment(sender, instance, **kwargs):
-    if instance.is_success():
+    from futupayments import config
+    if payment.is_success() and payment.testing == config.FUTUPAYMENTS_TEST_MODE:
         logging.info(
             u'поступила оплата заказа #%s в размере %s (транзакция #%s)',
             instance.order_id,
