@@ -29,7 +29,7 @@ INSTALLED_APPS = (
 
 Простой пример использования
 ============================
-Делаем простенькую страничку для перечисления 100 рублей. Сначала views.py:
+Делаем простенькую страничку для перечисления 100 рублей. Сначала `views.py`:
 
 ```python
 def my_view(request):
@@ -56,7 +56,7 @@ def my_view(request):
    })
 ```
 
-Шаблон, templates/my_template.html:
+Шаблон, `templates/my_template.html`:
 
 ```html
 <form method="post" action="{{ payment_form_url }}">
@@ -67,7 +67,7 @@ def my_view(request):
 
 Настройка уведомлений о платежах
 ================================
-Чтобы работали уведомления о платежах, во-первых, добавляем в urls.py обработчик callback'ов:
+Чтобы работали уведомления о платежах, во-первых, добавляем в `urls.py` обработчик callback'ов:
 
 ```python
 urlpatterns = patterns(
@@ -76,7 +76,7 @@ urlpatterns = patterns(
 )
 ```
 
-Получившийся URL — **http://вашсайт/futupayments/** надо прописать в личном кабинете Futubank'
+Получившийся URL — `http://вашсайт/futupayments/` надо прописать в личном кабинете Futubank'
 (https://secure.futubank.com) на вкладке «Уведомления о транзакциях» в пункте «Уведомления с помощью POST-запросов».
 
 Теперь после каждой транзакции будет создаваться новый экземпляр `futupayments.models.Payment`. Чтобы отслеживать
