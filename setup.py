@@ -13,4 +13,5 @@ setup(
         'futupayments': ['templates/futupayments/*'],
     },
     url='https://github.com/Futubank/django-futupayments',
+    requires=['django (>= 1.3)'],
 )
