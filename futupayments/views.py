@@ -1,8 +1,10 @@
+from __future__ import absolute_import
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
 
-from futupayments.forms import PaymentCallbackForm
-from futupayments.models import Payment
+from .forms import PaymentCallbackForm
+from .models import Payment
 
 
 def success(request):
@@ -13,6 +15,7 @@ def fail(request):
     return render(request, 'futupayments/fail.html')
 
 
+@require_POST
 def callback(request):
     try:
         payment = Payment.objects.get(
@@ -25,7 +28,7 @@ def callback(request):
     form = PaymentCallbackForm(request.POST, instance=payment)
     if not form.is_valid():
         resp = 'FAIL'
-        from futupayments import config
+        from . import config
         if config.FUTUPAYMENTS_TEST_MODE:
             resp += u': {0}'.format(form.as_p())
         return HttpResponse(resp)
