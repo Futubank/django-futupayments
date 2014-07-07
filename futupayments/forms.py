@@ -18,7 +18,7 @@ class PaymentCallbackForm(forms.ModelForm):
     testing = forms.CharField(required=False)
 
     def clean(self):
-        from futupayments import config
+        from . import config
         key = config.FUTUPAYMENTS_SECRET_KEY
         data = self.cleaned_data
         if self.cleaned_data['signature'] != get_signature(key, data):
@@ -40,7 +40,7 @@ class PaymentForm(forms.Form):
     def create(cls, request, amount, order_id, description,
                client_email='', client_phone='', client_name='',
                meta=None, cancel_url=None):
-        from futupayments import config
+        from . import config
         data = {
             'amount': amount,
             'description': description[:cls.MAX_DESCRIPTION_LENGTH],
