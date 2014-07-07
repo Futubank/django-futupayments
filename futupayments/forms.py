@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 import random
 import string
 import time
@@ -7,7 +8,7 @@ from hashlib import sha1
 
 from django import forms
 from django.core.exceptions import ValidationError
-from futupayments.models import Payment
+from .models import Payment
 
 
 class PaymentCallbackForm(forms.ModelForm):

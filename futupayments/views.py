@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
 
-from futupayments.forms import PaymentCallbackForm
-from futupayments.models import Payment
+from .forms import PaymentCallbackForm
+from .models import Payment
 
 
 def success(request):
