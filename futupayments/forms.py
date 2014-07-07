@@ -21,7 +21,7 @@ class PaymentCallbackForm(forms.ModelForm):
         from . import config
         key = config.FUTUPAYMENTS_SECRET_KEY
         data = self.cleaned_data
-        if self.cleaned_data['signature'] != get_signature(key, data):
+        if self.cleaned_data.get('signature') != get_signature(key, data):
             raise ValidationError('Incorrect signature')
         self.cleaned_data['testing'] = self.cleaned_data.get('testing') == '1'
         return self.cleaned_data
