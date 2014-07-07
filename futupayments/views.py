@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render
 
 from futupayments.forms import PaymentCallbackForm
@@ -14,6 +14,8 @@ def fail(request):
 
 
 def callback(request):
+    if request.method.lower() != 'post':
+        raise Http404
     try:
         payment = Payment.objects.get(
             transaction_id=request.POST.get('transaction_id'),
