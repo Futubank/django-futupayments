@@ -2,6 +2,7 @@ django-futupayments
 ===================
 
 Django-приложение для приём платежей с пластиковых карт через Futubank.com.
+Для работы требуется django >= 1.3
 
 Установка
 =========
@@ -9,6 +10,15 @@ Django-приложение для приём платежей с пластик
 
 ```
 pip install -e git+https://github.com/Futubank/django-futupayments.git#egg=futupayments
+```
+
+После добавления futupayments в INSTALLED_APPS
+```
+python manage.py syncdb
+```
+или, если используется South,
+```
+python manage.py migrate
 ```
 
 Базовая настройка
