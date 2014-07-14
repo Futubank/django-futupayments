@@ -5,10 +5,15 @@ import string
 import time
 import base64
 from hashlib import sha1
+import platform
 
+import django
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Payment
+
+
+FUTUPAYMENTS_VERSION = '1.0'
 
 
 class PaymentCallbackForm(forms.ModelForm):
@@ -63,6 +68,12 @@ class PaymentForm(forms.Form):
             'success_url': request.build_absolute_uri(
                 config.FUTUPAYMENTS_SUCCESS_URL,
             ),
+            'sysinfo': '{' +
+                '"json_enabled": "true", ' +
+                '"language": "Python ' + platform.python_version() + '", ' +
+                '"plugin": "django-futupayments v.' + FUTUPAYMENTS_VERSION + '", ' +
+                '"cms": "Django Framework v.' + django.get_version() + '"' +
+            '}',
         }
         key = config.FUTUPAYMENTS_SECRET_KEY
         data['signature'] = get_signature(key, data)
@@ -86,6 +97,7 @@ class PaymentForm(forms.Form):
     client_phone = forms.CharField(widget=forms.HiddenInput, required=False,
                                    min_length=10, max_length=30)
     client_name = forms.CharField(widget=forms.HiddenInput, required=False)
+    sysinfo = forms.CharField(max_length=255, widget=forms.HiddenInput, required=False)
     signature = forms.CharField(widget=forms.HiddenInput)
 
 
