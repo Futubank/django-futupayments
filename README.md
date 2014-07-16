@@ -1,7 +1,8 @@
 django-futupayments
 ===================
 
-Django-приложение для приём платежей с пластиковых карт через Futubank.com.
+Django-приложение для приём платежей с банковских карт через Futubank.com.
+Для работы требуется django >= 1.3
 
 Установка
 =========
@@ -9,6 +10,15 @@ Django-приложение для приём платежей с пластик
 
 ```
 pip install -e git+https://github.com/Futubank/django-futupayments.git#egg=futupayments
+```
+
+После добавления futupayments в INSTALLED_APPS
+```
+python manage.py syncdb
+```
+или, если используется South,
+```
+python manage.py migrate
 ```
 
 Базовая настройка
@@ -29,7 +39,7 @@ INSTALLED_APPS = (
 
 Простой пример использования
 ============================
-Делаем простенькую страничку для перечисления 100 рублей. Сначала views.py:
+Делаем простенькую страничку для перечисления 100 рублей. Сначала `views.py`:
 
 ```python
 def my_view(request):
@@ -56,7 +66,7 @@ def my_view(request):
    })
 ```
 
-Шаблон, templates/my_template.html:
+Шаблон, `templates/my_template.html`:
 
 ```html
 <form method="post" action="{{ payment_form_url }}">
@@ -67,7 +77,7 @@ def my_view(request):
 
 Настройка уведомлений о платежах
 ================================
-Чтобы работали уведомления о платежах, во-первых, добавляем в urls.py обработчик callback'ов:
+Чтобы работали уведомления о платежах, во-первых, добавляем в `urls.py` обработчик callback'ов:
 
 ```python
 urlpatterns = patterns(
@@ -76,10 +86,10 @@ urlpatterns = patterns(
 )
 ```
 
-Получившийся URL — **http://вашсайт/futupayments/** надо прописать в личном кабинете Futubank'
+Получившийся URL — `http://вашсайт/futupayments/` надо прописать в личном кабинете Futubank'
 (https://secure.futubank.com) на вкладке «Уведомления о транзакциях» в пункте «Уведомления с помощью POST-запросов».
 
-Теперь после каждой транзакции будет создаваться новый экземляр futupayments.models.Payment. Чтобы отслеживать
+Теперь после каждой транзакции будет создаваться новый экземпляр `futupayments.models.Payment`. Чтобы отслеживать
 поступления платежей, можно воспользоваться сигналами:
 
 ```python

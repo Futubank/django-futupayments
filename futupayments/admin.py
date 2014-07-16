@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 from django.contrib import admin
 
-import models
+from .models import Payment
 
 
 class PaymentAdmin(admin.ModelAdmin):
@@ -44,4 +45,4 @@ class PaymentAdmin(admin.ModelAdmin):
     #     return False
 
 
-admin.site.register(models.Payment, PaymentAdmin)
+admin.site.register(Payment, PaymentAdmin)

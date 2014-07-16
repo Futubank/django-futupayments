@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 
-from futupayments import views
+from . import views
 
 
 FUTUPAYMENTS_TEST_MODE = getattr(settings, 'FUTUPAYMENTS_TEST_MODE', True)
