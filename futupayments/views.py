@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from .forms import PaymentCallbackForm
@@ -16,6 +17,7 @@ def fail(request):
 
 
 @require_POST
+@csrf_exempt
 def callback(request):
     try:
         payment = Payment.objects.get(
