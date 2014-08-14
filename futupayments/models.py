@@ -15,8 +15,9 @@ class Payment(models.Model):
         u'время',
         auto_now_add=True,
     )
-    transaction_id = models.BigIntegerField(
+    transaction_id = models.CharField(
         u'ID транзакции в платежном шлюзе',
+        max_length=150,
         db_index=True,
     )
     testing = models.BooleanField(
