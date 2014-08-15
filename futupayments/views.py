@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -6,6 +6,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import PaymentCallbackForm
 from .models import Payment
+from . import config
 
 
 def success(request):
@@ -30,10 +31,9 @@ def callback(request):
     form = PaymentCallbackForm(request.POST, instance=payment)
     if not form.is_valid():
         resp = 'FAIL'
-        from . import config
         if config.FUTUPAYMENTS_TEST_MODE:
-            resp += u': {0}'.format(form.as_p())
+            resp += ': {0}'.format(form.as_p())
         return HttpResponse(resp)
 
     payment = form.save()
-    return HttpResponse(u'OK{0}'.format(payment.order_id))
+    return HttpResponse('OK{0}'.format(payment.order_id))
