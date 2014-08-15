@@ -1,6 +1,8 @@
 django-futupayments
 ===================
 
+[![Build Status](https://travis-ci.org/Futubank/django-futupayments.svg?branch=krukov%2Fconfig-refactoring)](https://travis-ci.org/Futubank/django-futupayments)
+
 Django-приложение для приём платежей с банковских карт через Futubank.com.
 Для работы требуется django >= 1.3
 
