@@ -28,7 +28,7 @@ settings.py:
 
 ```python
 # эти значения можно получить в личном кабинете Futubank'а
-FUTUPAYMENTS_MERCHANT_ID = id_вашего_магазина
+FUTUPAYMENTS_MERCHANT_ID = "id_вашего_магазина"
 FUTUPAYMENTS_SECRET_KEY = "секретный ключ вашего магазина"
 
 INSTALLED_APPS = (
