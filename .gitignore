@@ -1,3 +1,6 @@
-.pyc
+.idea
+.tox
+*.sqlite*
+*.pyc
 build
 dist
