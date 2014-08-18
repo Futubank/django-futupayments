@@ -11,9 +11,10 @@ try:
 except ImportError:
     override_settings = False
 from .forms import *
+from .forms import get_signature, double_sha1
 
 
-class TestForms(TestCase):
+class TestFormsCase(TestCase):
 
     def test_paymentform_creation_with_simple_data(self):
         responce = HttpRequest()
@@ -94,3 +95,13 @@ class TestForms(TestCase):
 
         self.assertIn('uniq_fail', form)
         self.assertIn('uniq_success', form)
+
+
+class TestUtilsCase(TestCase):
+
+    def test_get_signature(self):
+        self.assertEqual(get_signature('secret_key', {'param1': 'тест', 'param2': 2, 'param3': 'test'}),
+                          '0d86fe6782bd0c6a75ed77692791f8ca6681445f')
+
+    def test_double_sha1(self):
+        self.assertEqual(double_sha1('secret_key', 'привет hi'), 'd9aa509a9e9b296bceaa4dbc0ea64d81b5a04836')

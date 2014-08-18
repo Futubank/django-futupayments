@@ -109,26 +109,8 @@ class PaymentForm(forms.Form):
 
 
 def get_signature(secret_key, params):
-    """
-    >>> params = {
-    ...     "merchant": 43210,
-    ...     "amount": '174.7',
-    ...     "currency": 'RUB',
-    ...     "description": u'Заказ №73138754',
-    ...     "order_id": '73138754',
-    ...     "success_url": 'http://myshop.ru/success/',
-    ...     "fail_url": 'http://myshop.ru/fail/',
-    ...     "cancel_url": 'http://myshop.ru/cart/',
-    ...     "signature": '',
-    ...     "timestamp": '20140418151950',
-    ...     "meta": '{"tracking": 1234}',
-    ...     "salt": '00000000000000000000000000000000',
-    ... }
-    >>> get_signature('C0FFEE', params)
-    'cb3743cc37d87f5a4255fc3a99c223c0e869c145'
-    """
     return double_sha1(secret_key, '&'.join(
-        '{}={}'.format(force_encode(k), base64.b64encode(force_encode(params[k])))
+        '{}={}'.format(force_encode(k).decode('utf-8'), base64.b64encode(force_encode(params[k])).decode('utf-8'))
         for k in sorted(params)
         if params[k] and k != 'signature'
     ))
@@ -141,20 +123,10 @@ def force_encode(v):
 
 
 def double_sha1(secret_key, s):
-    """
-    >>> double_sha1('C0FFEE', 'example')
-    '27d204596505ff298ca79fb3bb949501cd7b2fa7'
-    """
-    if PY3:
-        secret_key = secret_key.encode('utf-8')
+    secret_key = secret_key.encode('utf-8')
     for i in range(2):
-        if PY3:
-            s = s.encode('utf-8')
+        s = s.encode('utf-8')
         s = sha1(secret_key + s).hexdigest()
     return s
 
 
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
-    print('doctests passed')
