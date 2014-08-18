@@ -6,6 +6,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import PaymentCallbackForm
 from .models import Payment
+from .signals import on_callback
 from . import config
 
 
@@ -29,6 +30,8 @@ def callback(request):
         payment = None
 
     form = PaymentCallbackForm(request.POST, instance=payment)
+    on_callback.send(sender=Payment, success=form.is_valid(), order=form.cleaned_data['order_id'],
+                     transaction=form.cleaned_data['transaction_id'], testing=form.cleaned_data['testing'])
     if not form.is_valid():
         resp = 'FAIL'
         if config.FUTUPAYMENTS_TEST_MODE:
