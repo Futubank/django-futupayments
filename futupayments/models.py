@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from django.db import models
 
 
@@ -18,6 +17,9 @@ class Payment(models.Model):
     )
     transaction_id = models.BigIntegerField(
         'ID транзакции в платежном шлюзе',
+    transaction_id = models.CharField(
+        u'ID транзакции в платежном шлюзе',
+        max_length=150,
         db_index=True,
     )
     testing = models.BooleanField(
