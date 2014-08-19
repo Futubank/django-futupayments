@@ -5,8 +5,8 @@ import sys
 import string
 import time
 import base64
-from hashlib import sha1
 import platform
+from hashlib import sha1
 
 import django
 from django import forms
@@ -23,24 +23,21 @@ FUTUPAYMENTS_VERSION = '1.0'
 
 
 class PaymentCallbackForm(forms.ModelForm):
-    unix_timestamp = forms.CharField()
-    salt = forms.CharField()
-    signature = forms.CharField()
     testing = forms.CharField(required=False)
 
     def clean(self):
         key = config.FUTUPAYMENTS_SECRET_KEY
-        data = self.cleaned_data
-        if self.cleaned_data.get('signature') != get_signature(key, data):
+        data = self.data.dict()
+        signature = data.pop('signature') if 'signature' in self.data else None
+        if signature != get_signature(key, data):
             raise ValidationError('Incorrect signature')
         self.cleaned_data['testing'] = self.cleaned_data.get('testing') == '1'
         return self.cleaned_data
 
     class Meta:
         model = Payment
-        exclude = (
-            'creation_datetime',
-        )
+        fields = ('transaction_id', 'testing', 'amount', 'currency',
+                  'order_id', 'state', 'message', 'meta')
 
 
 class PaymentForm(forms.Form):
@@ -112,7 +109,7 @@ def get_signature(secret_key, params):
     return double_sha1(secret_key, '&'.join(
         '{}={}'.format(force_encode(k).decode('utf-8'), base64.b64encode(force_encode(params[k])).decode('utf-8'))
         for k in sorted(params)
-        if params[k] and k != 'signature'
+        if params[k] is not None and k != 'signature'
     ))
 
 
