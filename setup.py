@@ -7,7 +7,8 @@ setup(
     author='Maxim Oransky',
     author_email='om@futubank.com',
     packages=[
-        'futupayments'
+        'futupayments',
+        'futupayments.migrations',
     ],
     package_data={
         'futupayments': ['templates/futupayments/*'],
