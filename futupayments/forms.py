@@ -12,14 +12,12 @@ import django
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Payment
-from . import config
+from . import config, get_version
 
 __all__ = ['PaymentForm', 'PaymentCallbackForm']
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
-
-FUTUPAYMENTS_VERSION = '1.0'
 
 
 class PaymentCallbackForm(forms.ModelForm):
@@ -74,7 +72,7 @@ class PaymentForm(forms.Form):
             'sysinfo': '{' +
                 '"json_enabled": "true", ' +
                 '"language": "Python ' + platform.python_version() + '", ' +
-                '"plugin": "django-futupayments v.' + FUTUPAYMENTS_VERSION + '", ' +
+                '"plugin": "django-futupayments v.' + get_version() + '", ' +
                 '"cms": "Django Framework v.' + django.get_version() + '"' +
             '}',
         }
