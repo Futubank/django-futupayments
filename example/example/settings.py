@@ -20,7 +20,6 @@ WSGI_APPLICATION = 'example.wsgi.application'
 INSTALLED_APPS = (
     'app',
     'futupayments',
-    'south',
 )
 
 FUTUPAYMENTS_MERCHANT_ID = '27'
