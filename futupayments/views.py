@@ -35,11 +35,7 @@ def callback(request):
         if config.FUTUPAYMENTS_TEST_MODE:
             resp += ': {0}'.format(form.as_p())
     else:
-        if form.cleaned_data['testing']:
-            payment = form.instance
-        else:
-            payment = form.save()
-        resp = 'OK {0}'.format(payment.order_id)
+        payment = form.save()
 
     on_callback.send(sender=payment, success=form.is_valid() and form.instance.is_success())
 

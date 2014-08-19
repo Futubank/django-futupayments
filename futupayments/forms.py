@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals, print_function
+from __future__ import absolute_import, unicode_literals
 import random
 import sys
 import string
@@ -107,7 +107,7 @@ def get_signature(secret_key, params):
     return double_sha1(secret_key, '&'.join(
         '{}={}'.format(force_encode(k).decode('utf-8'), base64.b64encode(force_encode(params[k])).decode('utf-8'))
         for k in sorted(params)
-        if params[k] is not None and k != 'signature'
+        if params[k] and k != 'signature'
     ))
 
 
