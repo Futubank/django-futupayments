@@ -27,16 +27,20 @@ def callback(request):
             state=request.POST.get('state'),
         )
     except (ValueError, TypeError, Payment.DoesNotExist):
-        payment = None
+        payment = Payment()
 
     form = PaymentCallbackForm(request.POST, instance=payment)
-    on_callback.send(sender=Payment, success=form.is_valid(), order=form.cleaned_data['order_id'],
-                     transaction=form.cleaned_data['transaction_id'], testing=form.cleaned_data['testing'])
     if not form.is_valid():
         resp = 'FAIL'
         if config.FUTUPAYMENTS_TEST_MODE:
             resp += ': {0}'.format(form.as_p())
-        return HttpResponse(resp)
+    else:
+        if form.cleaned_data['testing']:
+            payment = form.instance
+        else:
+            payment = form.save()
+        resp = 'OK {0}'.format(payment.order_id)
 
-    payment = form.save()
-    return HttpResponse('OK{0}'.format(payment.order_id))
+    on_callback.send(sender=payment, success=form.is_valid() and form.instance.is_success())
+
+    return HttpResponse(resp)

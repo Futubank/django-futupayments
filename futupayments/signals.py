@@ -3,4 +3,4 @@
 from django.dispatch import Signal
 
 
-on_callback = Signal(providing_args=['success', 'order_id', 'transaction_id', 'testing'])
+on_callback = Signal(providing_args=['success'])
