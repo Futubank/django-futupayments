@@ -1,41 +1,41 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 import random
+import sys
 import string
 import time
 import base64
-from hashlib import sha1
 import platform
+from hashlib import sha1
 
 import django
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Payment
+from . import config, get_version
 
+__all__ = ['PaymentForm', 'PaymentCallbackForm']
 
-FUTUPAYMENTS_VERSION = '1.0'
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
 
 
 class PaymentCallbackForm(forms.ModelForm):
-    unix_timestamp = forms.CharField()
-    salt = forms.CharField()
-    signature = forms.CharField()
     testing = forms.CharField(required=False)
 
     def clean(self):
-        from . import config
         key = config.FUTUPAYMENTS_SECRET_KEY
-        data = self.cleaned_data
-        if self.cleaned_data.get('signature') != get_signature(key, data):
+        data = dict(self.data.items())
+        signature = data.pop('signature') if 'signature' in self.data else None
+        if signature != get_signature(key, data):
             raise ValidationError('Incorrect signature')
         self.cleaned_data['testing'] = self.cleaned_data.get('testing') == '1'
         return self.cleaned_data
 
     class Meta:
         model = Payment
-        exclude = (
-            'creation_datetime',
-        )
+        fields = ('transaction_id', 'testing', 'amount', 'currency',
+                  'order_id', 'state', 'message', 'meta')
 
 
 class PaymentForm(forms.Form):
@@ -45,7 +45,8 @@ class PaymentForm(forms.Form):
     def create(cls, request, amount, order_id, description,
                client_email='', client_phone='', client_name='',
                meta=None, cancel_url=None):
-        from . import config
+        cancel_url = request.build_absolute_uri(cancel_url) \
+            if cancel_url is not None and not cancel_url.startswith(('http://', 'https://')) else cancel_url
         data = {
             'amount': amount,
             'description': description[:cls.MAX_DESCRIPTION_LENGTH],
@@ -71,13 +72,14 @@ class PaymentForm(forms.Form):
             'sysinfo': '{' +
                 '"json_enabled": "true", ' +
                 '"language": "Python ' + platform.python_version() + '", ' +
-                '"plugin": "django-futupayments v.' + FUTUPAYMENTS_VERSION + '", ' +
+                '"plugin": "django-futupayments v.' + get_version() + '", ' +
                 '"cms": "Django Framework v.' + django.get_version() + '"' +
             '}',
         }
         key = config.FUTUPAYMENTS_SECRET_KEY
         data['signature'] = get_signature(key, data)
         form = cls(data)
+        form.action = config.FUTUPAYMENTS_URL
         assert form.is_valid(), form.as_p()
         return form
 
@@ -102,46 +104,24 @@ class PaymentForm(forms.Form):
 
 
 def get_signature(secret_key, params):
-    u"""
-    >>> params = {
-    ...     "merchant": 43210,
-    ...     "amount": '174.7',
-    ...     "currency": 'RUB',
-    ...     "description": u'Заказ №73138754',
-    ...     "order_id": '73138754',
-    ...     "success_url": 'http://myshop.ru/success/',
-    ...     "fail_url": 'http://myshop.ru/fail/',
-    ...     "cancel_url": 'http://myshop.ru/cart/',
-    ...     "signature": '',
-    ...     "timestamp": '20140418151950',
-    ...     "meta": '{"tracking": 1234}',
-    ...     "salt": '00000000000000000000000000000000',
-    ... }
-    >>> get_signature('C0FFEE', params)
-    'cb3743cc37d87f5a4255fc3a99c223c0e869c145'
-    """
     return double_sha1(secret_key, '&'.join(
-        force_str(k) + '=' + base64.b64encode(force_str(params[k]))
+        '{}={}'.format(force_encode(k).decode('utf-8'), base64.b64encode(force_encode(params[k])).decode('utf-8'))
         for k in sorted(params)
         if params[k] and k != 'signature'
     ))
 
 
-def force_str(v):
-    return v.encode('utf-8') if isinstance(v, unicode) else str(v)
+def force_encode(v):
+    if PY2:
+        return v.encode('utf-8') if isinstance(v, unicode) else str(v)
+    return str(v).encode('utf-8')
 
 
 def double_sha1(secret_key, s):
-    """
-    >>> double_sha1('C0FFEE', 'example')
-    '27d204596505ff298ca79fb3bb949501cd7b2fa7'
-    """
+    secret_key = secret_key.encode('utf-8')
     for i in range(2):
+        s = s.encode('utf-8')
         s = sha1(secret_key + s).hexdigest()
     return s
 
 
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
-    print 'doctests passed'
