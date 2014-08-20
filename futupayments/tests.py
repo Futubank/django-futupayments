@@ -127,7 +127,7 @@ class TestCallbackView(TestCase):
             'meta': '',
         }
         data['signature'] = get_signature(settings.FUTUPAYMENTS_SECRET_KEY, data)
-        response = self.client.post(reverse('futupayments_callback'), data=data)
+        response = self.client.post(reverse('futupayments_callback') +'/', data=data)
 
         self.assertContains(response, 'OK')
         self.assertEqual(Payment.objects.count(), 1)

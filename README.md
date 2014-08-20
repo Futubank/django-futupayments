@@ -89,7 +89,7 @@ urlpatterns = patterns(
 )
 ```
 
-Получившийся URL — `http://вашсайт/futupayments/` надо прописать в личном кабинете Futubank'
+Получившийся URL — `http://вашсайт/futupayments/callback` надо прописать в личном кабинете Futubank'
 (https://secure.futubank.com) на вкладке «Уведомления о транзакциях» в пункте «Уведомления с помощью POST-запросов».
 
 Теперь после каждой транзакции будет создаваться новый экземпляр `futupayments.models.Payment`. Чтобы отслеживать

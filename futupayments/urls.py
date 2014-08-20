@@ -9,7 +9,7 @@ from . import views
 
 urlpatterns = patterns(
     '',
-    url('^$', views.callback, name='futupayments_callback'),
+    url(r'^callback/?$', views.callback, name='futupayments_callback'),
     url('^success/$', views.success),
     url('^fail/$', views.fail),
 )
