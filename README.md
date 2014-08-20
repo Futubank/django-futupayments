@@ -1,7 +1,7 @@
 django-futupayments
 ===================
 
-[![Build Status](https://travis-ci.org/Futubank/django-futupayments.svg?branch=krukov%2Fconfig-refactoring)](https://travis-ci.org/Futubank/django-futupayments)
+[![Build Status](https://travis-ci.org/Futubank/django-futupayments.svg?branch=master)](https://travis-ci.org/Futubank/django-futupayments)
 [![Python](http://img.shields.io/badge/python-2.7,%203.2,%203.3,%203.4-blue.svg)](https://travis-ci.org/Futubank/django-futupayments)
 [![Django](http://img.shields.io/badge/Django-1.3,%201.4,%201.5,%201.6-green.svg)](https://travis-ci.org/Futubank/django-futupayments)
 
@@ -14,7 +14,8 @@ Django-приложение для приём платежей с банковс
 Ставим пакет:
 
 ```
-pip install -e git+https://github.com/Futubank/django-futupayments.git#egg=futupayments
+pip install django-futupayments
+
 ```
 
 После добавления futupayments в INSTALLED_APPS
