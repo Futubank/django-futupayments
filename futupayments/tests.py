@@ -131,7 +131,7 @@ class TestCallbackView(TestCase):
 
         self.assertContains(response, 'OK')
         self.assertEqual(Payment.objects.count(), 1)
-        payment = Payment.objects.first()
+        payment = Payment.objects.all()[0]
         self.assertEqual(payment.transaction_id, '1q2w3e')
         self.assertEqual(payment.testing, True)
         self.assertEqual(payment.amount, Decimal('999.99'))
