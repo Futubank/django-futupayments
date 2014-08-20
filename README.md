@@ -2,9 +2,12 @@ django-futupayments
 ===================
 
 [![Build Status](https://travis-ci.org/Futubank/django-futupayments.svg?branch=krukov%2Fconfig-refactoring)](https://travis-ci.org/Futubank/django-futupayments)
+[![Python](http://img.shields.io/badge/python-2.7,%203.2,%203.3,%203.4-blue.svg)](https://travis-ci.org/Futubank/django-futupayments)
+[![Django](http://img.shields.io/badge/Django-1.3,%201.4,%201.5,%201.6-green.svg)](https://travis-ci.org/Futubank/django-futupayments)
+
 
 Django-приложение для приём платежей с банковских карт через Futubank.com.
-Для работы требуется django >= 1.3
+
 
 Установка
 =========
@@ -93,17 +96,16 @@ urlpatterns = patterns(
 поступления платежей, можно воспользоваться сигналами:
 
 ```python
-from futupayments.models import Payment
-from futupayments import config
+from futupayments.signals import on_callback
 
-@receiver(post_save, sender=Payment)
-def on_new_payment(sender, instance, **kwargs):
-    if payment.is_success() and payment.testing == config.FUTUPAYMENTS_TEST_MODE:
+@receiver(on_callback)
+def on_new_payment(sender, success, **kwargs):
+    if success and sender.is_success():
         logging.info(
             u'поступила оплата заказа #%s в размере %s (транзакция #%s)',
-            instance.order_id,
-            instance.amount,
-            instance.transaction_id,
+            sender.order_id,
+            sender.amount,
+            sender.transaction_id,
         )
 
 ```
