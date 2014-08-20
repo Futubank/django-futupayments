@@ -25,7 +25,7 @@ class PaymentCallbackForm(forms.ModelForm):
 
     def clean(self):
         key = config.FUTUPAYMENTS_SECRET_KEY
-        data = self.data.dict()
+        data = dict(self.data.items())
         signature = data.pop('signature') if 'signature' in self.data else None
         if signature != get_signature(key, data):
             raise ValidationError('Incorrect signature')
