@@ -3,13 +3,19 @@ from __future__ import unicode_literals, absolute_import
 import time
 from unittest import skipIf
 from random import randint
+from decimal import Decimal
 
 from django.test import TestCase
 from django.http import HttpRequest
+from django.core.urlresolvers import reverse
+from django.conf import settings
+
 try:
     from django.test.utils import override_settings
 except ImportError:
     override_settings = False
+
+from .models import Payment
 from .forms import *
 from .forms import get_signature, double_sha1
 
@@ -105,3 +111,84 @@ class TestUtilsCase(TestCase):
 
     def test_double_sha1(self):
         self.assertEqual(double_sha1('secret_key', 'привет hi'), 'd9aa509a9e9b296bceaa4dbc0ea64d81b5a04836')
+
+
+class TestCallbackView(TestCase):
+
+    def test_callback_on_valid(self):
+        data = {
+            'transaction_id': '1q2w3e',
+            'testing': '1',
+            'amount': '999.99',
+            'currency': 'RUB',
+            'order_id': 'order1',
+            'state': 'COMPLETE',
+            'message': 'Комплит',
+            'meta': '',
+        }
+        data['signature'] = get_signature(settings.FUTUPAYMENTS_SECRET_KEY, data)
+        response = self.client.post(reverse('futupayments_callback'), data=data)
+
+        self.assertContains(response, 'OK')
+        self.assertEqual(Payment.objects.count(), 1)
+        payment = Payment.objects.first()
+        self.assertEqual(payment.transaction_id, '1q2w3e')
+        self.assertEqual(payment.testing, True)
+        self.assertEqual(payment.amount, Decimal('999.99'))
+        self.assertEqual(payment.currency, 'RUB')
+        self.assertEqual(payment.order_id, 'order1')
+        self.assertEqual(payment.get_state_display(), 'успешно')
+        self.assertEqual(payment.message, 'Комплит')
+        self.assertEqual(payment.meta, '')
+
+    def test_callback_on_invalid_signature(self):
+        data = {
+            'transaction_id': '1q2w3e',
+            'testing': '1',
+            'amount': '999.99',
+            'currency': 'RUB',
+            'order_id': 'order1',
+            'state': 'COMPLETE',
+            'message': 'Комплит',
+            'meta': '',
+            'signature': 'wrong_signature',
+        }
+
+        response = self.client.post(reverse('futupayments_callback'), data=data)
+
+        self.assertContains(response, 'FAIL')
+        self.assertEqual(Payment.objects.count(), 0)
+
+    def test_callback_on_invalid_data(self):
+        data = {
+            'transaction_id': '1q2w3e',
+            'testing': '1',
+            'amount': 'invalid',
+            'currency': 'RUB',
+            'order_id': 'order1',
+            'state': 'COMPLETE',
+            'message': 'Комплит',
+        }
+
+        data['signature'] = get_signature(settings.FUTUPAYMENTS_SECRET_KEY, data)
+        response = self.client.post(reverse('futupayments_callback'), data=data)
+
+        self.assertContains(response, 'FAIL')
+        self.assertEqual(Payment.objects.count(), 0)
+
+    def test_callback_on_get_request(self):
+        data = {
+            'transaction_id': '1q2w3e',
+            'testing': '1',
+            'amount': 'invalid',
+            'currency': 'RUB',
+            'order_id': 'order1',
+            'state': 'COMPLETE',
+            'message': 'Комплит',
+        }
+
+        data['signature'] = get_signature(settings.FUTUPAYMENTS_SECRET_KEY, data)
+        response = self.client.get(reverse('futupayments_callback'), data=data)
+
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(Payment.objects.count(), 0)

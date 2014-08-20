@@ -36,7 +36,7 @@ def callback(request):
             resp += ': {0}'.format(form.as_p())
     else:
         payment = form.save()
+        resp = 'OK {0}'.format(payment.order_id)
 
     on_callback.send(sender=payment, success=form.is_valid() and form.instance.is_success())
-
     return HttpResponse(resp)
