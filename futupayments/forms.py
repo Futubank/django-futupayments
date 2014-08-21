@@ -96,8 +96,7 @@ class PaymentForm(forms.Form):
     unix_timestamp = forms.IntegerField(widget=forms.HiddenInput)
     salt = forms.CharField(widget=forms.HiddenInput)
     client_email = forms.EmailField(widget=forms.HiddenInput, required=False)
-    client_phone = forms.CharField(widget=forms.HiddenInput, required=False,
-                                   min_length=10, max_length=30)
+    client_phone = forms.CharField(widget=forms.HiddenInput, required=False, max_length=30)
     client_name = forms.CharField(widget=forms.HiddenInput, required=False)
     sysinfo = forms.CharField(max_length=255, widget=forms.HiddenInput, required=False)
     signature = forms.CharField(widget=forms.HiddenInput)
