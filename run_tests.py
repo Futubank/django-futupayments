@@ -19,8 +19,15 @@ settings.configure(
     FUTUPAYMENTS_MERCHANT_ID='1',
     FUTUPAYMENTS_SECRET_KEY = '1',
     FUTUPAYMENTS_TEST_MODE = True,
-    ROOT_URLCONF='example.example.urls'
+    ROOT_URLCONF='example.example.urls',
+    MIDDLEWARE_CLASSES=(),
 )
 
 if __name__ == "__main__":
+    try:
+        from django.apps import apps
+    except ImportError:
+        pass
+    else:
+        apps.populate(settings.INSTALLED_APPS)
     call_command('test', 'futupayments')
