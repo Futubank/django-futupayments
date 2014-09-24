@@ -6,7 +6,7 @@ django-futupayments
 [![Django](http://img.shields.io/badge/Django-1.3,%201.4,%201.5,%201.6-green.svg)](https://travis-ci.org/Futubank/django-futupayments)
 
 
-Django-приложение для приём платежей с банковских карт через Futubank.com.
+Django-приложение для приёма платежей с банковских карт через Futubank.com.
 
 
 Установка
