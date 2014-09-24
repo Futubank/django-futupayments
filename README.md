@@ -33,14 +33,19 @@ python manage.py migrate
 settings.py:
 
 ```python
-# эти значения можно получить в личном кабинете Futubank'а
-FUTUPAYMENTS_MERCHANT_ID = "id_вашего_магазина"
-FUTUPAYMENTS_SECRET_KEY = "секретный ключ вашего магазина"
-
+# подключаем приложение
 INSTALLED_APPS = (
   # ...
   'futupayments',
 )
+
+# работаем в тестовом режиме
+FUTUPAYMENTS_TEST_MODE = True
+
+# эти значения можно получить в личном кабинете Futubank'а
+FUTUPAYMENTS_MERCHANT_ID = "id_вашего_магазина"
+FUTUPAYMENTS_SECRET_KEY = "секретный ключ вашего магазина"
+
 ```
 
 Простой пример использования

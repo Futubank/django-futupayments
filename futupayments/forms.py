@@ -61,11 +61,16 @@ class PaymentForm(forms.Form):
         client_name='',
         meta=None,
         cancel_url=None,
+        is_testing=None,
     ):
         if cancel_url is not None and not cancel_url.lower().startswith(('http://', 'https://')):
             cancel_url = request.build_absolute_uri(cancel_url)
 
+        if is_testing is None:
+            is_testing = config.FUTUPAYMENTS_TEST_MODE
+
         data = {
+            'is_testing': str(int(is_testing)),
             'amount': amount,
             'description': description[:cls.MAX_DESCRIPTION_LENGTH],
             'order_id': str(order_id),
@@ -97,10 +102,11 @@ class PaymentForm(forms.Form):
         key = config.FUTUPAYMENTS_SECRET_KEY
         data['signature'] = get_signature(key, data)
         form = cls(data)
-        form.action = config.FUTUPAYMENTS_URL
+        form.action = config.FUTUPAYMENTS_HOST + '/pay'
         assert form.is_valid(), form.as_p()
         return form
 
+    is_testing = forms.CharField(widget=forms.HiddenInput)
     merchant = forms.CharField(widget=forms.HiddenInput)
     amount = forms.DecimalField(widget=forms.HiddenInput)
     currency = forms.CharField(widget=forms.HiddenInput)

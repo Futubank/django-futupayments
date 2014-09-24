@@ -6,12 +6,6 @@ from django.core.urlresolvers import reverse
 
 __all__ = ['config']
 
-_FUTUPAYMENTS_TEST_MODE = getattr(settings, 'FUTUPAYMENTS_TEST_MODE', False)
-if _FUTUPAYMENTS_TEST_MODE:
-    default_url = 'https://secure.futubank.com/testing-pay/'
-else:
-    default_url = 'https://secure.futubank.com/pay/'
-
 
 def required(name):
     result = getattr(settings, name, None)
@@ -21,12 +15,9 @@ def required(name):
 
 
 class Config(object):
-    FUTUPAYMENTS_TEST_MODE = _FUTUPAYMENTS_TEST_MODE
-
-    FUTUPAYMENTS_URL = getattr(settings, 'FUTUPAYMENTS_URL', default_url)
-
+    FUTUPAYMENTS_TEST_MODE = getattr(settings, 'FUTUPAYMENTS_TEST_MODE', False)
+    FUTUPAYMENTS_HOST = getattr(settings, 'FUTUPAYMENTS_HOST', 'https://secure.futubank.com')
     FUTUPAYMENTS_MERCHANT_ID = required('FUTUPAYMENTS_MERCHANT_ID')
-
     FUTUPAYMENTS_SECRET_KEY = required('FUTUPAYMENTS_SECRET_KEY')
 
     @property
