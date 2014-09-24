@@ -34,19 +34,37 @@ class PaymentCallbackForm(forms.ModelForm):
 
     class Meta:
         model = Payment
-        fields = ('transaction_id', 'testing', 'amount', 'currency',
-                  'order_id', 'state', 'message', 'meta')
+        fields = (
+            'transaction_id',
+            'testing',
+            'amount',
+            'currency',
+            'order_id',
+            'state',
+            'message',
+            'meta',
+        )
 
 
 class PaymentForm(forms.Form):
     MAX_DESCRIPTION_LENGTH = 250
 
     @classmethod
-    def create(cls, request, amount, order_id, description,
-               client_email='', client_phone='', client_name='',
-               meta=None, cancel_url=None):
-        cancel_url = request.build_absolute_uri(cancel_url) \
-            if cancel_url is not None and not cancel_url.startswith(('http://', 'https://')) else cancel_url
+    def create(
+        cls,
+        request,
+        amount,
+        order_id,
+        description,
+        client_email='',
+        client_phone='',
+        client_name='',
+        meta=None,
+        cancel_url=None,
+    ):
+        if cancel_url is not None and not cancel_url.lower().startswith(('http://', 'https://')):
+            cancel_url = request.build_absolute_uri(cancel_url)
+
         data = {
             'amount': amount,
             'description': description[:cls.MAX_DESCRIPTION_LENGTH],
