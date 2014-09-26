@@ -2,8 +2,10 @@ django-futupayments
 ===================
 
 [![Build Status](https://travis-ci.org/Futubank/django-futupayments.svg?branch=master)](https://travis-ci.org/Futubank/django-futupayments)
-[![Python](http://img.shields.io/badge/python-2.7,%203.2,%203.3,%203.4-blue.svg)](https://travis-ci.org/Futubank/django-futupayments)
-[![Django](http://img.shields.io/badge/Django-1.3,%201.4,%201.5,%201.6-green.svg)](https://travis-ci.org/Futubank/django-futupayments)
+[![Latest Version](https://pypip.in/version/django-futupayments/badge.svg?text=version)](https://pypi.python.org/pypi/django-futupayments/)
+[![Supported Python versions](https://pypip.in/py_versions/django-futupayments/badge.svg)](https://pypi.python.org/pypi/django-futupayments/)
+[![Development Status](https://pypip.in/status/django-futupayments/badge.svg)](https://pypi.python.org/pypi/django-futupayments/)
+[![Supported Django versions](http://img.shields.io/badge/Django-1.3,%201.4,%201.5,%201.6,%201.7-green.svg)](https://travis-ci.org/Futubank/django-futupayments)
 
 
 Django-приложение для приёма платежей с банковских карт через Futubank.com.
