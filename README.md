@@ -2,9 +2,9 @@ django-futupayments
 ===================
 
 [![Build Status](https://travis-ci.org/Futubank/django-futupayments.svg?branch=master)](https://travis-ci.org/Futubank/django-futupayments)
-[![Latest Version](https://pypip.in/version/django-futupayments/badge.svg?text=version)](https://pypi.python.org/pypi/django-futupayments/)
-[![Supported Python versions](https://pypip.in/py_versions/django-futupayments/badge.svg)](https://pypi.python.org/pypi/django-futupayments/)
-[![Development Status](https://pypip.in/status/django-futupayments/badge.svg)](https://pypi.python.org/pypi/django-futupayments/)
+[![Latest Version](https://img.shields.io/pypi/v/django-futupayments.svg?label=version)](https://pypi.python.org/pypi/django-futupayments/)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/django-futupayments.svg)](https://pypi.python.org/pypi/django-futupayments/)
+[![Development Status](https://img.shields.io/pypi/status/django-futupayments.svg)](https://pypi.python.org/pypi/django-futupayments/)
 [![Supported Django versions](http://img.shields.io/badge/Django-1.3,%201.4,%201.5,%201.6,%201.7-green.svg)](https://travis-ci.org/Futubank/django-futupayments)
 
 
