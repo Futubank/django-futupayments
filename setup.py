@@ -1,5 +1,5 @@
-from distutils.core import setup
 import re
+from distutils.core import setup
 
 
 def get_version():
@@ -12,7 +12,7 @@ setup(
     version=get_version(),
     author='Maxim Oransky',
     license='MIT license',
-    author_email='om@futubank.com',
+    author_email='maxim.oransky@gmail.com',
     packages=[
         'futupayments',
         'futupayments.migrations',
@@ -21,18 +21,17 @@ setup(
         'futupayments': ['templates/futupayments/*'],
     },
     url='https://github.com/Futubank/django-futupayments',
-    requires=['django (>= 1.3)'],
+    requires=['django (>= 1.7)'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
 )

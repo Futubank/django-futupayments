@@ -1,14 +1,15 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from django.conf import settings
-try:
-    from django.conf.urls.defaults import patterns, url, include
-except ImportError:
-    from django.conf.urls import patterns, url, include
+from django.conf.urls import url
+from django.urls import include
 
-urlpatterns = patterns('',
+
+urlpatterns = [
     url(r'^futupayments/', include('futupayments.urls')),
-)
+]
+
 
 if 'app' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('', url(r'^$', 'app.views.home', name='home'))
+    from app import views
+    urlpatterns += [
+        url(r'^$', views.home, name='home'),
+    ]
