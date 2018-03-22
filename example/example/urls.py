@@ -1,6 +1,10 @@
 from django.conf import settings
 from django.conf.urls import url
-from django.urls import include
+
+try:
+    from django.urls import include
+except ImportError:
+    from django.conf.urls import include
 
 
 urlpatterns = [
