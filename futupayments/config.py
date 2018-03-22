@@ -1,5 +1,8 @@
 from django.core.exceptions import ImproperlyConfigured
-from django.urls import reverse
+try:
+    from django.urls import reverse
+except:
+    from django.core.urlresolvers import reverse
 
 __all__ = ['config']
 

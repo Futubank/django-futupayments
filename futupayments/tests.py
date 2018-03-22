@@ -1,16 +1,18 @@
 import time
 from decimal import Decimal
 from random import randint
-from unittest import skipIf
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.urls import reverse
+try:
+    from django.urls import reverse
+except:
+    from django.core.urlresolvers import reverse
 
-from futupayments import config
+from . import config
 from .forms import get_signature, double_sha1, PaymentForm, RecieptItem
 from .models import Payment
 

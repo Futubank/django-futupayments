@@ -1,5 +1,8 @@
 from django.test import LiveServerTestCase
-from django.urls import reverse
+try:
+    from django.urls import reverse
+except:
+    from django.core.urlresolvers import reverse
 
 
 class TestMainUsage(LiveServerTestCase):
