@@ -17,10 +17,11 @@ settings.configure(
         }
     },
     FUTUPAYMENTS_MERCHANT_ID='1',
-    FUTUPAYMENTS_SECRET_KEY = '1',
-    FUTUPAYMENTS_TEST_MODE = True,
+    FUTUPAYMENTS_SECRET_KEY='1',
+    FUTUPAYMENTS_TEST_MODE=True,
     ROOT_URLCONF='example.example.urls',
     MIDDLEWARE_CLASSES=(),
+    ALLOWED_HOSTS=['*'],
 )
 
 if __name__ == "__main__":
