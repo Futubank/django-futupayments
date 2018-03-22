@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.urls import reverse
 
@@ -6,27 +5,48 @@ __all__ = ['config']
 
 
 def required(name):
+    from django.conf import settings
     result = getattr(settings, name, None)
     if result is None:
         raise ImproperlyConfigured('settings.{} required'.format(name))
     return result
 
 
+def optional(name, default):
+    from django.conf import settings
+    return getattr(settings, name, default)
+
+
 class Config(object):
-    FUTUPAYMENTS_TEST_MODE = getattr(settings, 'FUTUPAYMENTS_TEST_MODE', False)
-    FUTUPAYMENTS_HOST = getattr(settings, 'FUTUPAYMENTS_HOST', 'https://secure.futubank.com')  # noqa
-    FUTUPAYMENTS_MERCHANT_ID = required('FUTUPAYMENTS_MERCHANT_ID')
-    FUTUPAYMENTS_SECRET_KEY = required('FUTUPAYMENTS_SECRET_KEY')
+    @property
+    def FUTUPAYMENTS_RECIEPTS(self):
+        return optional('FUTUPAYMENTS_RECIEPTS', False)
+
+    @property
+    def FUTUPAYMENTS_TEST_MODE(self):
+        return optional('FUTUPAYMENTS_TEST_MODE', False)
+
+    @property
+    def FUTUPAYMENTS_HOST(self):
+        return optional('FUTUPAYMENTS_HOST', 'https://secure.futubank.com')
+
+    @property
+    def FUTUPAYMENTS_MERCHANT_ID(self):
+        return required('FUTUPAYMENTS_MERCHANT_ID')
+
+    @property
+    def FUTUPAYMENTS_SECRET_KEY(self):
+        return required('FUTUPAYMENTS_SECRET_KEY')
 
     @property
     def FUTUPAYMENTS_SUCCESS_URL(self):
         from . import views
-        return getattr(settings, 'FUTUPAYMENTS_SUCCESS_URL', reverse(views.success))  # noqa
+        return optional('FUTUPAYMENTS_SUCCESS_URL', reverse(views.success))
 
     @property
     def FUTUPAYMENTS_FAIL_URL(self):
         from . import views
-        return getattr(settings, 'FUTUPAYMENTS_FAIL_URL', reverse(views.fail))
+        return optional('FUTUPAYMENTS_FAIL_URL', reverse(views.fail))
 
 
 config = Config()

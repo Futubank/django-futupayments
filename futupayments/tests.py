@@ -4,17 +4,15 @@ from random import randint
 from unittest import skipIf
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.http import HttpRequest
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.urls import reverse
 
-try:
-    from django.test.utils import override_settings
-except ImportError:
-    override_settings = False
-
+from futupayments import config
+from .forms import get_signature, double_sha1, PaymentForm, RecieptItem
 from .models import Payment
-from .forms import get_signature, double_sha1, PaymentForm
 
 
 class TestFormsCase(TestCase):
@@ -68,11 +66,10 @@ class TestFormsCase(TestCase):
         self.assertIn('cancel/url', form)
         self.assertIn('Some meta info', form)
 
-    @skipIf((not override_settings), 'django 1.3')
     def test_paymentform_creation_with_settings(self):
-        responce = HttpRequest()
-        responce.META['SERVER_NAME'] = 'test.com'
-        responce.META['SERVER_PORT'] = '80'
+        response = HttpRequest()
+        response.META['SERVER_NAME'] = 'test.com'
+        response.META['SERVER_PORT'] = '80'
 
         order = randint(1, 99999999)
 
@@ -82,7 +79,7 @@ class TestFormsCase(TestCase):
             FUTUPAYMENTS_TEST_MODE=True,
         ):
             form = PaymentForm.create(
-                responce,
+                response,
                 amount=100,
                 order_id=order,
                 description='Заказ №{}'.format(order),
@@ -92,15 +89,57 @@ class TestFormsCase(TestCase):
                 cancel_url='cancel/url',
                 meta='Some meta info',
             )
+        self.assertTrue(form.is_valid())
 
         form = form.as_p()
-
         self.assertIn('uniq_fail', form)
         self.assertIn('uniq_success', form)
 
+    def test_reciept(self):
+        response = HttpRequest()
+        response.META['SERVER_NAME'] = 'test.com'
+        response.META['SERVER_PORT'] = '80'
+        order = randint(1, 99999999)
+
+        with override_settings(
+            FUTUPAYMENTS_SUCCESS_URL='/uniq_success',
+            FUTUPAYMENTS_FAIL_URL='uniq_fail',
+            FUTUPAYMENTS_TEST_MODE=True,
+            FUTUPAYMENTS_RECIEPTS=True,
+        ):
+            self.assertTrue(config.FUTUPAYMENTS_RECIEPTS)
+            self.assertRaises(ValidationError, PaymentForm.create,
+                response,
+                amount=100,
+                order_id=order,
+                description='Заказ №{}'.format(order),
+                client_contact='xxx@xxxx.com',
+            )
+            self.assertRaises(ValidationError, PaymentForm.create,
+                response,
+                amount=100,
+                order_id=order,
+                description='Заказ №{}'.format(order),
+                client_contact='xxx@xxxx.com',
+                receipt_items=[
+                    RecieptItem('Фрукты', 50, n=20, nds=RecieptItem.TAX_18_NDS),
+                ],
+            )
+
+            form = PaymentForm.create(
+                response,
+                amount=100,
+                order_id=order,
+                description='Заказ №{}'.format(order),
+                client_contact='xxx@xxxx.com',
+                receipt_items=[
+                    RecieptItem('Фрукты', 50, n=2, nds=RecieptItem.TAX_18_NDS),
+                ],
+            )
+            self.assertTrue(form.is_valid(), form.as_p())
+
 
 class TestUtilsCase(TestCase):
-
     def test_get_signature(self):
         self.assertEqual(
             get_signature('secret_key', {'param1': 'тест', 'param2': 2, 'param3': 'test'}),

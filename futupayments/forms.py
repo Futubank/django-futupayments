@@ -42,6 +42,44 @@ class PaymentCallbackForm(forms.ModelForm):
         )
 
 
+class RecieptItem:
+    TAX_NO_NDS = 1  # без НДС;
+    TAX_0_NDS = 2  # НДС по ставке 0%;
+    TAX_10_NDS = 3  # НДС чека по ставке 10%;
+    TAX_18_NDS = 4  # НДС чека по ставке 18%
+    TAX_10_110_NDS = 5  # НДС чека по расчетной ставке 10/110;
+    TAX_18_118_NDS = 6  # НДС чека по расчетной ставке 18/118.
+
+    def __init__(self, title, amount, n=1, nds=TAX_0_NDS):
+        self.title = self._clean_title(title)
+        self.amount = amount
+        self.n = n
+        self.nds = nds
+
+    def as_dict(self):
+        return {
+            'quantity': self.n,
+            'price': {
+                'amount': self.amount,
+            },
+            'tax': self.nds,
+            'text': self.title,
+        }
+
+    def get_sum(self):
+        return self.n * self.amount
+
+    _chars = (
+        '0123456789'
+        '"(),.:;- '
+        'йцукенгшщзхъфывапролджэёячсмитьбю'
+        'qwertyuiopasdfghjklzxcvbnm'
+    )
+
+    def _clean_title(self, s):
+        return ''.join(char for char in s if char.lower() in self._chars)[:64]
+
+
 class PaymentForm(forms.Form):
     MAX_DESCRIPTION_LENGTH = 250
 
@@ -55,9 +93,11 @@ class PaymentForm(forms.Form):
         client_email='',
         client_phone='',
         client_name='',
+        client_contact=None,
         meta=None,
         cancel_url=None,
         testing=None,
+        receipt_items=(),
     ):
         if (
             cancel_url is not None and
@@ -98,6 +138,29 @@ class PaymentForm(forms.Form):
                 'cms': 'Django Framework v.{}'.format(django.get_version()),
             }),
         }
+
+        if config.FUTUPAYMENTS_RECIEPTS:
+            if not client_contact:
+                client_contact = client_email or client_phone
+
+            if not client_contact:
+                raise ValidationError('Email or phone required')
+
+            if not receipt_items:
+                raise ValidationError('receipt_items required')
+
+            items_sum = sum([item.get_sum() for item in receipt_items])
+            if items_sum != amount:
+                raise ValidationError('Amounts mismatched: %r != %r' % (
+                    items_sum,
+                    amount,
+                ))
+
+            data['receipt'] = json.dumps({
+                'customer_contact': client_contact,
+                'items': [item.as_dict() for item in receipt_items],
+            }, ensure_ascii=False)
+
         data['signature'] = get_signature(config.FUTUPAYMENTS_SECRET_KEY, data)
         form = cls(data)
         form.action = config.FUTUPAYMENTS_HOST + '/pay'
