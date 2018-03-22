@@ -22,10 +22,6 @@ pip install django-futupayments
 
 После добавления futupayments в INSTALLED_APPS
 ```
-python manage.py syncdb
-```
-или, если используется South,
-```
 python manage.py migrate
 ```
 
@@ -91,10 +87,10 @@ def my_view(request):
 Чтобы работали уведомления о платежах, во-первых, добавляем в `urls.py` обработчик callback'ов:
 
 ```python
-urlpatterns = patterns(
+urlpatterns = [
     # ...
     url('^futupayments/', include('futupayments.urls')),
-)
+]
 ```
 
 Получившийся URL — `http://вашсайт/futupayments/callback` надо прописать в личном кабинете Futubank'

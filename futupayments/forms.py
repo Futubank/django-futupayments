@@ -1,23 +1,19 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
+import base64
+import hashlib
+import json
+import platform
 import random
-import sys
 import string
 import time
-import base64
-import platform
-from hashlib import sha1
 
 import django
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Payment
+
 from . import config, get_version
+from .models import Payment
 
 __all__ = ['PaymentForm', 'PaymentCallbackForm']
-
-PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
 
 
 class PaymentCallbackForm(forms.ModelForm):
@@ -63,7 +59,10 @@ class PaymentForm(forms.Form):
         cancel_url=None,
         testing=None,
     ):
-        if cancel_url is not None and not cancel_url.lower().startswith(('http://', 'https://')):
+        if (
+            cancel_url is not None and
+            not cancel_url.lower().startswith(('http://', 'https://'))
+        ):
             cancel_url = request.build_absolute_uri(cancel_url)
 
         if testing is None:
@@ -92,15 +91,14 @@ class PaymentForm(forms.Form):
             'success_url': request.build_absolute_uri(
                 config.FUTUPAYMENTS_SUCCESS_URL,
             ),
-            'sysinfo': '{' +
-                '"json_enabled": "true", ' +
-                '"language": "Python ' + platform.python_version() + '", ' +
-                '"plugin": "django-futupayments v.' + get_version() + '", ' +
-                '"cms": "Django Framework v.' + django.get_version() + '"' +
-            '}',
+            'sysinfo': json.dumps({
+                'json_enabled': True,
+                'language': 'Python {}'.format(platform.python_version()),
+                'plugin': 'django - futupayments v.{}'.format(get_version()),
+                'cms': 'Django Framework v.{}'.format(django.get_version()),
+            }),
         }
-        key = config.FUTUPAYMENTS_SECRET_KEY
-        data['signature'] = get_signature(key, data)
+        data['signature'] = get_signature(config.FUTUPAYMENTS_SECRET_KEY, data)
         form = cls(data)
         form.action = config.FUTUPAYMENTS_HOST + '/pay'
         assert form.is_valid(), form.as_p()
@@ -120,31 +118,23 @@ class PaymentForm(forms.Form):
     unix_timestamp = forms.IntegerField(widget=forms.HiddenInput)
     salt = forms.CharField(widget=forms.HiddenInput)
     client_email = forms.EmailField(widget=forms.HiddenInput, required=False)
-    client_phone = forms.CharField(widget=forms.HiddenInput, required=False, max_length=30)
+    client_phone = forms.CharField(widget=forms.HiddenInput, required=False, max_length=30)  # noqa
     client_name = forms.CharField(widget=forms.HiddenInput, required=False)
-    sysinfo = forms.CharField(max_length=255, widget=forms.HiddenInput, required=False)
+    sysinfo = forms.CharField(max_length=255, widget=forms.HiddenInput, required=False)  # noqa
     signature = forms.CharField(widget=forms.HiddenInput)
 
 
-def get_signature(secret_key, params):
+def get_signature(secret_key: str, params: dict) -> str:
     return double_sha1(secret_key, '&'.join(
-        '{}={}'.format(force_encode(k).decode('utf-8'), base64.b64encode(force_encode(params[k])).decode('utf-8'))
+        '='.join((k, base64.b64encode(str(params[k]).encode()).decode()))
         for k in sorted(params)
         if params[k] and k != 'signature'
     ))
 
 
-def force_encode(v):
-    if PY2:
-        return v.encode('utf-8') if isinstance(v, unicode) else str(v)
-    return str(v).encode('utf-8')
-
-
-def double_sha1(secret_key, s):
-    secret_key = secret_key.encode('utf-8')
+def double_sha1(secret_key: str, s: str) -> str:
+    secret_key = secret_key.encode()
     for i in range(2):
-        s = s.encode('utf-8')
-        s = sha1(secret_key + s).hexdigest()
+        s = s.encode()
+        s = hashlib.sha1(secret_key + s).hexdigest()
     return s
-
-

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.db import models
 
 
@@ -53,8 +52,8 @@ class Payment(models.Model):
     def is_success(self):
         return self.state == self.STATE_COMPLETE
 
-    def __unicode__(self):
-        return '#{0} {1}'.format(self.transaction_id, self.state)
+    def __str__(self):
+        return '#{} {}'.format(self.transaction_id, self.state)
 
     class Meta:
         ordering = (

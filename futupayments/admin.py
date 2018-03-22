@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from django.contrib import admin
 
 from .models import Payment
 
 
+@admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
     list_display_links = (
         'creation_datetime',
@@ -40,9 +39,3 @@ class PaymentAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False
-
-    # def has_change_permission(self, request, obj=None):
-    #     return False
-
-
-admin.site.register(Payment, PaymentAdmin)

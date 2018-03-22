@@ -1,6 +1,9 @@
+import os
+
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-
+ALLOWED_HOSTS = ['*']
 
 DATABASES = {
     'default': {
@@ -25,7 +28,5 @@ INSTALLED_APPS = (
 FUTUPAYMENTS_MERCHANT_ID = '1'
 FUTUPAYMENTS_SECRET_KEY = '1'
 FUTUPAYMENTS_TEST_MODE = True
-
-import os
 
 TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'), )

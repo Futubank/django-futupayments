@@ -1,14 +1,12 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
 import time
-from unittest import skipIf
-from random import randint
 from decimal import Decimal
+from random import randint
+from unittest import skipIf
 
-from django.test import TestCase
-from django.http import HttpRequest
-from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.http import HttpRequest
+from django.test import TestCase
+from django.urls import reverse
 
 try:
     from django.test.utils import override_settings
@@ -16,12 +14,10 @@ except ImportError:
     override_settings = False
 
 from .models import Payment
-from .forms import *
-from .forms import get_signature, double_sha1
+from .forms import get_signature, double_sha1, PaymentForm
 
 
 class TestFormsCase(TestCase):
-
     def test_paymentform_creation_with_simple_data(self):
         responce = HttpRequest()
         responce.META['SERVER_NAME'] = 'test.com'
@@ -81,10 +77,10 @@ class TestFormsCase(TestCase):
         order = randint(1, 99999999)
 
         with override_settings(
-                FUTUPAYMENTS_SUCCESS_URL='/uniq_success',
-                FUTUPAYMENTS_FAIL_URL='uniq_fail',
-                FUTUPAYMENTS_TEST_MODE=True,
-            ):
+            FUTUPAYMENTS_SUCCESS_URL='/uniq_success',
+            FUTUPAYMENTS_FAIL_URL='uniq_fail',
+            FUTUPAYMENTS_TEST_MODE=True,
+        ):
             form = PaymentForm.create(
                 responce,
                 amount=100,
@@ -106,15 +102,19 @@ class TestFormsCase(TestCase):
 class TestUtilsCase(TestCase):
 
     def test_get_signature(self):
-        self.assertEqual(get_signature('secret_key', {'param1': 'тест', 'param2': 2, 'param3': 'test'}),
-                          '0d86fe6782bd0c6a75ed77692791f8ca6681445f')
+        self.assertEqual(
+            get_signature('secret_key', {'param1': 'тест', 'param2': 2, 'param3': 'test'}),
+            '0d86fe6782bd0c6a75ed77692791f8ca6681445f',
+        )
 
     def test_double_sha1(self):
-        self.assertEqual(double_sha1('secret_key', 'привет hi'), 'd9aa509a9e9b296bceaa4dbc0ea64d81b5a04836')
+        self.assertEqual(
+            double_sha1('secret_key', 'привет hi'),
+            'd9aa509a9e9b296bceaa4dbc0ea64d81b5a04836',
+        )
 
 
 class TestCallbackView(TestCase):
-
     def test_callback_on_valid(self):
         data = {
             'transaction_id': '1q2w3e',
@@ -127,7 +127,7 @@ class TestCallbackView(TestCase):
             'meta': '',
         }
         data['signature'] = get_signature(settings.FUTUPAYMENTS_SECRET_KEY, data)
-        response = self.client.post(reverse('futupayments_callback') +'/', data=data)
+        response = self.client.post(reverse('futupayments_callback') + '/', data=data)  # noqa
 
         self.assertContains(response, 'OK')
         self.assertEqual(Payment.objects.count(), 1)
