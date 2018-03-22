@@ -113,14 +113,14 @@ class TestFormsCase(TestCase):
                 amount=100,
                 order_id=order,
                 description='Заказ №{}'.format(order),
-                client_contact='xxx@xxxx.com',
+                receipt_contact='xxx@xxxx.com',
             )
             self.assertRaises(ValidationError, PaymentForm.create,
                 response,
                 amount=100,
                 order_id=order,
                 description='Заказ №{}'.format(order),
-                client_contact='xxx@xxxx.com',
+                receipt_contact='xxx@xxxx.com',
                 receipt_items=[
                     RecieptItem('Фрукты', 50, n=20, nds=RecieptItem.TAX_18_NDS),
                 ],
@@ -131,7 +131,7 @@ class TestFormsCase(TestCase):
                 amount=100,
                 order_id=order,
                 description='Заказ №{}'.format(order),
-                client_contact='xxx@xxxx.com',
+                receipt_contact='xxx@xxxx.com',
                 receipt_items=[
                     RecieptItem('Фрукты', 50, n=2, nds=RecieptItem.TAX_18_NDS),
                 ],

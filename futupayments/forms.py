@@ -93,10 +93,10 @@ class PaymentForm(forms.Form):
         client_email='',
         client_phone='',
         client_name='',
-        client_contact=None,
         meta=None,
         cancel_url=None,
         testing=None,
+        receipt_contact=None,
         receipt_items=(),
     ):
         if (
@@ -140,11 +140,8 @@ class PaymentForm(forms.Form):
         }
 
         if config.FUTUPAYMENTS_RECIEPTS:
-            if not client_contact:
-                client_contact = client_email or client_phone
-
-            if not client_contact:
-                raise ValidationError('Email or phone required')
+            if not receipt_contact:
+                raise ValidationError('receipt_contact required')
 
             if not receipt_items:
                 raise ValidationError('receipt_items required')
@@ -156,10 +153,13 @@ class PaymentForm(forms.Form):
                     amount,
                 ))
 
-            data['receipt'] = json.dumps({
-                'customer_contact': client_contact,
-                'items': [item.as_dict() for item in receipt_items],
-            }, ensure_ascii=False)
+            data.update({
+                'receipt_contact': receipt_contact,
+                'receipt_items': json.dumps(
+                    [item.as_dict() for item in receipt_items],
+                    ensure_ascii=False,
+                ),
+            })
 
         data['signature'] = get_signature(config.FUTUPAYMENTS_SECRET_KEY, data)
         form = cls(data)
