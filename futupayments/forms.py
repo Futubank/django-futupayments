@@ -185,6 +185,8 @@ class PaymentForm(forms.Form):
     client_name = forms.CharField(widget=forms.HiddenInput, required=False)
     sysinfo = forms.CharField(max_length=255, widget=forms.HiddenInput, required=False)  # noqa
     signature = forms.CharField(widget=forms.HiddenInput)
+    receipt_contact = forms.CharField(widget=forms.HiddenInput, required=False)
+    receipt_items = forms.CharField(widget=forms.HiddenInput, required=False)
 
 
 def get_signature(secret_key: str, params: dict) -> str:
